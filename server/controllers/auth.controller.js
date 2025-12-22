@@ -50,7 +50,7 @@ const signup = async (req, res) => {
       //save the user to the database
       await newUser.save();
 
-      const token = generateToken(newUser, res);
+       generateToken(newUser._id, res);
 
       res.status(201).json({
         message: "User registered successfully.",
@@ -79,11 +79,64 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  res.send("Login endpoint");
+  try {
+    //firstly check the required fields
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({
+        sucess: false,
+        message: "Username and password are required.",
+      });
+    }
+  
+    //check if the user exists
+    const user = await User.findOne({ username });
+    //compare the password
+    const isPasswordValid = await bcrypt.compare(password, user?.password || "");
+
+    if (!isPasswordValid || !user) {
+      return res.status(401).json({
+        sucess: false,
+        message: "Invalid username or password.",
+      });
+    }
+    //generate token
+    generateToken(user, res);
+
+    res.status(200).json({
+      message: "Login successful.",
+      sucess: true,
+      user: {
+        _id: user._id,
+        username: user.username,
+        fullName: user.fullName,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error in signup controller:", error);
+    res.status(500).json({ 
+      sucess: false,
+      message: "internal Server error." });
+  }
 };
 
 const logout = async (req, res) => {
-  res.send("Logout endpoint");
+  try {
+    res.clearCookie("jwt");
+    res.status(200).json({
+      message: "Logout successful.",
+      sucess: true,
+    });
+  } catch (error) {
+    console.error("Error in logout controller:", error);
+    res.status(500).json({ 
+      sucess: false,
+      message: "internal Server error." });
+  }
 };
 
 module.exports = {
