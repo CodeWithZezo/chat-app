@@ -6,8 +6,7 @@ const sendMessage = async (req, res) => {
     const { id: receiverId } = req.params;
     const { message } = req.body;
     const senderId = req.user.id;
-    console.log(senderId, receiverId,message);
-    
+
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     });
@@ -19,10 +18,9 @@ const sendMessage = async (req, res) => {
     }
 
     const newMessage = new Message({ senderId, receiverId, message });
-    await newMessage.save();
 
     conversation.messages.push(newMessage._id);
-    await conversation.save();
+    Promise.all([conversation.save(), newMessage.save()]);
 
     res.status(201).json({ success: true, message: newMessage });
   } catch (error) {
@@ -36,16 +34,23 @@ const sendMessage = async (req, res) => {
 
 const getMessages = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id : userToChatId } = req.params;
+    const userId = req.user.id;
+    const conservation = await Conversation.findOne({
+      participants: { $all: [userId, userToChatId] },
+    }).populate("messages");
 
-    // Logic to retrieve messages for user with id
-    const messages = [
-      { from: id, content: "Hello!" },
-      { from: id, content: "How are you?" },
-    ];
-    res.status(200).json({ messages });
+    if (!conservation) {
+      return res.status(200).json({ success: true, messages: [] });
+    }
+    res.status(200).json(conservation.messages);
+
   } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve messages" });
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error during send message controller",
+    });
   }
 };
 
