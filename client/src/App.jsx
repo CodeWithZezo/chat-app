@@ -8,6 +8,8 @@ import Login from "./pages/login/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+import Loader from "./components/Loader";
+
 const App = () => {
   const { getProfile, isAuthChecked } = useAuthStore();
 
@@ -18,9 +20,7 @@ const App = () => {
   // ⛔ wait until auth check completes
   if (!isAuthChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
+      <Loader />
     );
   }
 
