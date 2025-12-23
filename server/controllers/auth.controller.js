@@ -50,7 +50,7 @@ const signup = async (req, res) => {
       //save the user to the database
       await newUser.save();
 
-       generateToken(newUser._id, res);
+      generateToken(newUser._id, res);
 
       res.status(201).json({
         message: "User registered successfully.",
@@ -64,17 +64,17 @@ const signup = async (req, res) => {
         },
       });
     } else {
-      return res.status(400).json({ 
+      return res.status(400).json({
         sucess: false,
-        message: "Invalid user data." });
+        message: "Invalid user data.",
+      });
     }
-
-
   } catch (error) {
     console.error("Error in signup controller:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       sucess: false,
-      message: "internal Server error." });
+      message: "internal Server error.",
+    });
   }
 };
 
@@ -82,18 +82,21 @@ const login = async (req, res) => {
   try {
     //firstly check the required fields
     const { username, password } = req.body;
-    
+
     if (!username || !password) {
       return res.status(400).json({
         sucess: false,
         message: "Username and password are required.",
       });
     }
-  
+
     //check if the user exists
     const user = await User.findOne({ username });
     //compare the password
-    const isPasswordValid = await bcrypt.compare(password, user?.password || "");
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.password || ""
+    );
 
     if (!isPasswordValid || !user) {
       return res.status(401).json({
@@ -115,12 +118,12 @@ const login = async (req, res) => {
         profilePic: user.profilePic,
       },
     });
-
   } catch (error) {
     console.error("Error in signup controller:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       sucess: false,
-      message: "internal Server error." });
+      message: "internal Server error.",
+    });
   }
 };
 
@@ -133,14 +136,39 @@ const logout = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in logout controller:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       sucess: false,
-      message: "internal Server error." });
+      message: "internal Server error.",
+    });
   }
 };
 
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+        
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      user: user,
+    });
+  } catch (error) {
+    console.error("Error in getProfile controller:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
 module.exports = {
   signup,
   login,
   logout,
+  getProfile
 };

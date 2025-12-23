@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
+app.use(cors(
+  {origin: 'http://localhost:5173', credentials: true}
+));
 
 const authRoutes = require('./routes/auth.route');
 const messageRoutes = require('./routes/message.route.js');
