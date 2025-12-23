@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+
 const authRoutes = require('./routes/auth.route');
 const messageRoutes = require('./routes/message.route.js');
-const cookieParser = require('cookie-parser');
+const userRoutes = require('./routes/user.route.js');
 
 const connectDB = require('./config/db');
 dotenv.config();
@@ -15,6 +17,8 @@ app.use(cookieParser());
 
 app.use('/api/auth',authRoutes)
 app.use('/api/messages', messageRoutes);
+app.use('/api/users', userRoutes);
+
 connectDB();
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

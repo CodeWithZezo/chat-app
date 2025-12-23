@@ -34,7 +34,7 @@ const sendMessage = async (req, res) => {
 
 const getMessages = async (req, res) => {
   try {
-    const { id : userToChatId } = req.params;
+    const { id: userToChatId } = req.params;
     const userId = req.user.id;
     const conservation = await Conversation.findOne({
       participants: { $all: [userId, userToChatId] },
@@ -44,7 +44,6 @@ const getMessages = async (req, res) => {
       return res.status(200).json({ success: true, messages: [] });
     }
     res.status(200).json(conservation.messages);
-
   } catch (error) {
     console.error(error);
     res.status(500).json({
