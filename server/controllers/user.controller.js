@@ -9,10 +9,7 @@ const getUsersForSidebar = async (req, res) => {
       _id: { $ne: new mongoose.Types.ObjectId(currentUserId) }
     }).select("-password -email -createdAt -updatedAt -__v");
 
-    res.status(200).json({
-      success: true,
-      data: allUsers
-    });
+    res.status(200).json(allUsers);
 
   } catch (error) {
     console.error("Error fetching users for sidebar:", error);
