@@ -1,10 +1,6 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../lib/api";
 
-const api = axios.create({
-  baseURL: "http://localhost:5000/api",
-  withCredentials: true,
-});
 
 export const useAuthStore = create((set) => ({
   user: null,
