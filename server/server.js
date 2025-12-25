@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(cors(
-  {origin: 'http://localhost:5173', credentials: true}
+  {origin: process.env.FRONTEND_URL, credentials: true}
 ));
 
 const authRoutes = require('./routes/auth.route');
