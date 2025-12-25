@@ -10,6 +10,7 @@ export const useUserStore = create((set) => ({
     users: [],
     isLoading: false, 
     isDataFetched: false,
+    
     fetchUsers: async () => {
         set({isLoading: true});
         try {

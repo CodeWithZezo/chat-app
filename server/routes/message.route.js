@@ -6,4 +6,4 @@ const protectRoute = require('../middlewares/protectRoute.js');
 router.post("/send/:id",protectRoute, sendMessage);
 router.get("/:id", protectRoute, getMessages);
 
-module.exports = router;
+module.exports = router; 

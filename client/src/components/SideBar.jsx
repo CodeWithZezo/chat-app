@@ -1,15 +1,26 @@
 import React, { use, useEffect, useState } from "react";
 import { useUserStore } from "../zustand/user";
+import {useMessageStore} from "../zustand/message";
+import {useAuthStore} from "../zustand/auth"
 const SideBar = () => {
   const { users, fetchUsers, isDataFetched } = useUserStore();
+  const { fetchMessages, setCurrentChatId } = useMessageStore();
+  const { user } = useAuthStore()
   useEffect(() => {
     fetchUsers();
   }, []);
 
   if(isDataFetched){
     console.log("Users in SideBar:", users);
+    console.log(user);
+    
   }
-  
+
+  const openChat = (userId) => {
+    setCurrentChatId(userId);
+    fetchMessages(userId);
+  };
+
   return (
      <div className="h-screen w-80 bg-base-200 overflow-y-auto">
       <div className="p-4 border-b border-base-300">
@@ -35,7 +46,8 @@ const SideBar = () => {
           <>
             {users.map((u) => (
               <div 
-                key={u.id} 
+              onClick={() => openChat(u._id)}
+                key={u._id} 
                 className="flex items-center gap-3 p-3 mb-2 bg-base-100 rounded-lg hover:bg-base-300 transition-colors cursor-pointer"
               >
                 <div className="avatar">
@@ -44,7 +56,7 @@ const SideBar = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h2 className="font-semibold">{u.username}</h2>
+                  <h2 className="font-semibold">{u._id === user._id ? `You (${u.username})`  : u.username}</h2>
                   <p className="text-sm text-base-content/60">Online</p>
                 </div>
                 <div className="badge badge-success badge-xs"></div>
@@ -54,6 +66,8 @@ const SideBar = () => {
         )}
       </div>
     </div>
+
+
   );
 };
 
