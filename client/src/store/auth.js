@@ -14,13 +14,14 @@ export const useAuthStore = create((set) => ({
       set({ user: response.data.user, isLoading: false });
       set({ myId: user._id });
       return response;
+      
     } catch (error) {
       set({ isLoading: false });
       throw error;
     }
   },
 
-  
+
   login: async (data) => {
     set({ isLoading: true });
     try {
