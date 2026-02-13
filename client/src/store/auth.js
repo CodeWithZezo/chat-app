@@ -20,6 +20,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  
   login: async (data) => {
     set({ isLoading: true });
     try {
